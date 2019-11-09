@@ -55,7 +55,7 @@ Visualization Manager:
       Value: true
     - Class: rviz/Image
       Enabled: true
-      Image Topic: /cam1/image_raw
+      Image Topic: /darknet_ros/detection_image
       Max Value: 1
       Median window: 5
       Min Value: 0
@@ -131,5 +131,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1200
-  X: 59
-  Y: 25
+  X: 58
+  Y: 0

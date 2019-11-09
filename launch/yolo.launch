@@ -7,4 +7,9 @@
 
     <!-- Launch RViz -->
       <node name="rviz" pkg="rviz" type="rviz" args="-d $(find turtle_nav)/rviz/yolo.rviz"/>
+
+    <!-- include yolo_v3.launch and remap subscriber -->
+  <include file="$(find darknet_ros)/launch/yolo_v3.launch"> 
+    <arg name="image" value="/cam1/image_raw" />
+  </include>
 </launch>
