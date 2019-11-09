@@ -1,0 +1,10 @@
+<launch>
+	<!-- Launch usb_cam node -->
+    <node pkg="usb_cam" type="usb_cam_node" name="cam1">
+      <!-- Parameters used to find the camera -->
+      <param name="pixel_format" value="yuyv"/>
+    </node>
+
+    <!-- Launch RViz -->
+      <node name="rviz" pkg="rviz" type="rviz" args="-d $(find turtle_nav)/rviz/yolo.rviz"/>
+</launch>
