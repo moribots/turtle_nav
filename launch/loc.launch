@@ -7,7 +7,9 @@
 	  </node>
 
 	  <!-- include house_turtle -->
-	  <include file="$(find turtle_nav)/launch/house_turtle.launch"/>
+	  <include file="$(find turtle_nav)/launch/house_turtle.launch">
+	  	<arg name="rviz_arg" value="-d $(find turtle_nav)/rviz/nav_turtle.rviz"/>
+	  </include>
 	 
 	  <!-- include amcl -->
 	  <include file="$(find turtlebot3_navigation)/launch/amcl.launch">
