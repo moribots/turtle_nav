@@ -1,0 +1,17 @@
+<launch>
+  <!-- include turtlebot3 house -->
+  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_house.launch"/>
+
+  <!-- include turtlebot3 teleop -->
+  <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch"/>
+
+  <!-- include turtlebot3 slam: gmapping -->
+  <include file="$(find turtlebot3_slam)/launch/turtlebot3_slam.launch">
+    <arg name="slam_methods" value="gmapping" />
+    <arg name="open_rviz" value="false" />
+  </include>
+
+  <!-- Rviz to show burger, map and laser -->
+ <node name="rviz" pkg="rviz" type="rviz" args="-d $(find turtle_nav)/rviz/house_turtle.rviz"/>
+
+</launch>
