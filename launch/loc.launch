@@ -1,0 +1,19 @@
+  <launch>
+  	  <!-- Run the map server -->
+	  <arg name="map_file" default="$(find turtle_nav)/maps/map.yaml"/>
+	  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+
+	  <!-- include house_turtle -->
+	  <include file="$(find turtle_nav)/launch/house_turtle.launch"/>
+	 
+	  <!-- include amcl -->
+	  <include file="$(find turtlebot3_navigation)/launch/amcl.launch">
+	  	<arg name="initial_pose_x" value="-3.0"/>
+	  	<arg name="initial_pose_y" value="1.0"/>
+	  </include>
+
+	  <!-- include move_base -->
+	  <include file="$(find turtlebot3_navigation)/launch/move_base.launch">
+	    <arg name="model" value="burger"/>
+	  </include>
+</launch>
