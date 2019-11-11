@@ -1,4 +1,7 @@
   <launch>
+  	<!-- Arguments -->
+  	<arg name="house" default="true"/>
+
   	  <!-- Run the map server -->
 	  <arg name="map_file" default="$(find turtle_nav)/maps/map.yaml"/>
 	  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)">
@@ -6,9 +9,10 @@
 	  	<remap from="map" to="mymap"/>
 	  </node>
 
-	  <!-- include house_turtle -->
+	  <!-- include house_turtle and pass house arg -->
 	  <include file="$(find turtle_nav)/launch/house_turtle.launch">
 	  	<arg name="rviz_arg" value="-d $(find turtle_nav)/rviz/nav_turtle.rviz"/>
+	  	<arg name="house" value="$(arg house)"/>
 	  </include>
 	 
 	  <!-- include amcl -->
