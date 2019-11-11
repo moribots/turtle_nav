@@ -17,7 +17,7 @@
 	 
 	  <!-- include amcl -->
 	  <include file="$(find turtlebot3_navigation)/launch/amcl.launch">
-	  	<arg name="initial_pose_x" value="-3.0"/>
+	  	<arg name="initial_pose_x" value="-2.0"/>
 	  	<arg name="initial_pose_y" value="1.0"/>
 	  </include>
 
