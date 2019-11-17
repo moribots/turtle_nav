@@ -16,12 +16,14 @@ import numpy as np
 from random import randrange
 import actionlib
 from actionlib_msgs.msg import GoalStatus
+from geometry_msgs.msg import PoseStamped
+from gazebo_msgs.msg import LinkStates
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from nav_msgs.msg import OccupancyGrid
 # from sensor_msgs.msg import LaserScan
 
 
-class AutoMap():
+class AutoMapLib():
     def __init__(self):
 
         rospy.init_node('mapper', anonymous=True)
@@ -35,10 +37,10 @@ class AutoMap():
         rospy.loginfo("Waiting for move_base action server...")
         wait = self.client.wait_for_server(rospy.Duration(5.0))
         if not wait:
-            rospy.logerr("Action server not available!")
-            rospy.signal_shutdown("Action server not available!")
+            rospy.logerr("Action server unresponsive!")
+            rospy.signal_shutdown("Action server unresponsive!")
             return
-        rospy.loginfo("Connected to move base server")
+        rospy.loginfo("Connected to move_base action server!")
         # callback from /map topic
         self.sub = rospy.Subscriber('/map', OccupancyGrid, self.callback_map)
 
@@ -85,7 +87,7 @@ class AutoMap():
 
         coord = [self.x, self.y]
         # log chosen coord
-        rospy.loginfo(coord)
+        rospy.logdebug(coord)
 
         # If completion counter is even, set 2D nav goal
         if self.completion % 2 == 0:
@@ -94,37 +96,43 @@ class AutoMap():
             self.completion += 1
             self.movebase_client()
 
-    def done_cb(self, status, result):
+    def goal_status(self, status, result):
         """DESCRIPTION
 
             Args:
 
             Returns:
         """
+        # Increment counter for any terminal status to avoid getting stuck
         self.completion += 1
-        # Reference for terminal status values: http://docs.ros.org/diamondback/api/actionlib_msgs/html/msg/GoalStatus.html
+        # Terminal status values: http://docs.ros.org/diamondback/api/actionlib_msgs/html/msg/GoalStatus.html
+
+        # Goal completed!
+        if status == 3:
+            rospy.loginfo("Goal pose reached!")
+
+        # Cancelled Goal post-exec
         if status == 2:
             rospy.loginfo(
-                "Goal pose " + str(self.goal_cnt) +
-                " received a cancel request after it started executing, completed execution!"
+                "Goal cancelled via request post execution, completed execution."
             )
 
-        if status == 3:
-            rospy.loginfo("Goal pose " + str(self.goal_cnt) + " reached")
-
+        # Goal Aborted (incomplete information, e.g no orientation)
         if status == 4:
-            rospy.loginfo("Goal was aborted by the Action Server")
-            rospy.signal_shutdown("Goal aborted, shutting down!")
+            rospy.loginfo("Goal aborted by Action Server.")
+            # rospy.signal_shutdown("Goal aborted, shutting down!")
             return
 
+        # Goal rejected (intersects obstacle)
         if status == 5:
-            rospy.loginfo("Goal has been rejected by the Action Server")
-            rospy.signal_shutdown("Goal rejected, shutting down!")
+            rospy.loginfo("Goal rejected by Action Server.")
+            # rospy.signal_shutdown("Goal rejected, shutting down!")
             return
 
+        # Cancelled Goal pre-exec
         if status == 8:
             rospy.loginfo(
-                "Goal received a cancel request before it started executing, successfully cancelled!"
+                "Goal cancelled via request prior to execution, succesfully cancelled."
             )
 
     def movebase_client(self):
@@ -139,70 +147,15 @@ class AutoMap():
         goal.target_pose.header.stamp = rospy.Time.now()
         goal.target_pose.pose.position.x = self.x
         goal.target_pose.pose.position.y = self.y
-        rospy.loginfo("Sending goal pose to Action Server")
-        self.client.send_goal(goal, self.done_cb)
-
-
-class Mapper():
-    """ DESCRIPTION
-    """
-    def __init__(self):
-        self.completion = 0
-        self.sub = rospy.Subscriber('/map', OccupancyGrid, self.callback_map)
-
-    def callback_map(self, map):
-        """ DESCRIPTION
-
-            Args:
-        """
-        try:
-            self.talker_automap(map)
-            # log input data as debug-level message
-            rospy.logdebug(map)
-        except rospy.ROSInterruptException:
-            pass
-
-    def talker_automap(self, map):
-        """ DESCRIPTION
-
-            Args:
-
-            Returns and Publishes:
-        """
-        # Create an action client called "move_base" with action definition file "MoveBaseAction"
-        client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
-
-        # Waits until the action server has started up and started listening for goals.
-        client.wait_for_server()
-
-        # Creates a new goal with the MoveBaseGoal constructor
-        goal = MoveBaseGoal()
-        goal.target_pose.header.frame_id = "map"
-        goal.target_pose.header.stamp = rospy.Time.now()
-        # Move 0.5 meters forward along the x axis of the "map" coordinate frame
-        goal.target_pose.pose.position.x = -1.0
-        goal.target_pose.pose.position.y = -1.0
-        # No rotation of the mobile base frame w.r.t. map frame
         goal.target_pose.pose.orientation.w = 1.0
-
-        # Sends the goal to the action server.
-        client.send_goal(goal)
-        # Waits for the server to finish performing the action.
-        wait = client.wait_for_result()
-        # If the result doesn't arrive, assume the Server is not available
-        if not wait:
-            rospy.logerr("Action server not available!")
-            rospy.signal_shutdown("Action server not available!")
-        else:
-            # Result of executing the action
-            rospy.loginfo(client.get_result())
-            return client.get_result()
+        rospy.loginfo("Sending goal pose [{}, {}]".format(self.x, self.y))
+        self.client.send_goal(goal, self.goal_status)
 
 
 def main():
     """ The main() function. """
     # Initialise node
-    automap = AutoMap()
+    automap = AutoMapLib()
     rospy.spin()
 
 
