@@ -1,6 +1,6 @@
 <launch>
   <!-- Arguments -->
-  <arg name="rviz_arg" default="-d $(find turtle_nav)/rviz/house_turtle.rviz" />
+  <arg name="rviz_arg" default="-d $(find turtle_nav)/rviz/nav_turtle.rviz" />
   <arg name="house"    default="true"/>
   <arg name="gmap"     default="true" />
 
