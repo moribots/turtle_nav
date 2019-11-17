@@ -1,0 +1,31 @@
+<launch>
+  <!-- Arguments -->
+  <arg name="rviz_arg" default="-d $(find turtle_nav)/rviz/house_turtle.rviz" />
+  <arg name="house"    default="true"/>
+  <arg name="gmap"     default="true" />
+
+  <!-- Optionally include turtlebot3 house -->
+  <group if="$(arg house)">
+    <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_house.launch">
+      <arg name="model" value="burger"/>
+      <arg name="x_pos" value="-2.0"/>
+    </include>
+  </group>
+
+    <!-- include move_base -->
+    <include file="$(find turtlebot3_navigation)/launch/move_base.launch">
+      <arg name="model" value="burger"/>
+    </include>
+
+  <!-- include turtlebot3 slam: gmapping -->
+  <group if="$(arg gmap)">
+    <include file="$(find turtlebot3_slam)/launch/turtlebot3_slam.launch">
+      <arg name="slam_methods" value="gmapping" />
+      <arg name="open_rviz"    value="false" />
+    </include>
+  </group>
+
+  <!-- Rviz to show burger, map and laser -->
+ <node name="rviz" pkg="rviz" type="rviz" args="$(arg rviz_arg)"/>
+
+</launch>

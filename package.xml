@@ -2,7 +2,7 @@
 <package format="2">
   <name>turtle_nav</name>
   <version>0.0.0</version>
-  <description>The turtle_nav package</description>
+  <description>Autonomous mapping and navigation using turtlebot3 burger in Gazebo</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
@@ -51,6 +51,7 @@
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>rospy</build_depend>
   <build_depend>rviz</build_depend>
+  <build_depend>actionlib_msgs</build_depend>
   <build_export_depend>rospy</build_export_depend>
   <build_export_depend>rviz</build_export_depend>
   <exec_depend>rospy</exec_depend>
