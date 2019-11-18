@@ -5,9 +5,9 @@
 ****
 ## Image Processing: yolo.launch
 
-This package calls te `usb_cam_node` from the `usb_cam` package as 'cam1'. The `pixel_format` parameter is passed as `yuyv`. **ADD WHAT IS YUYV**. RViz is also launched with a saved configuration that loads and image that reads off the topic `/darknet_ros/detection_image`. This topic is published to by the `darknet_ros` node in the `darknet_ros` package, which is set to read from `/cam1/image_raw` (this is where the `usb_cam_node` publishes the raw image frames) through the `yolo_v3.launch` file, which in turn passes thisparameter to the `darknet_ros.launch` file.
+This package calls te `usb_cam_node` from the `usb_cam` package as 'cam1'. The `pixel_format` parameter is passed as `yuyv` to mark the colour space. RViz is also launched with a saved configuration that loads and image that reads off the topic `/darknet_ros/detection_image`. This topic is published to by the `darknet_ros` node in the `darknet_ros` package, which is set to read from `/cam1/image_raw` (this is where the `usb_cam_node` publishes the raw image frames) through the `yolo_v3.launch` file, which in turn passes thisparameter to the `darknet_ros.launch` file.
 
-Although the frame rate is low (approximately 0.1Hz), it is noted in the `darknet_ros` documentation that the package is CUDA-optimised, indicating that CPUs are not capable of running it well. The `darknet_ros` node takes the raw image and uses **ADD WHAT ML ALGO THEY USE HERE** to detect humans, buses, cars, etc. In the screenshot below, I am detected as a person. 
+Although the frame rate is low (approximately 0.1Hz), it is noted in the `darknet_ros` documentation that the package is CUDA-optimised, indicating that CPUs are not capable of running it well. The `darknet_ros` node takes the raw image and uses YOLO (You Only Look Once), which is based on the COCO dataset and uses a Convolutionary Neural Network to detect object classes such as persons, buses, cars, etc. In the screenshot below, I am detected as a person. 
 
 ![yolo](media/yolo.png)
 
