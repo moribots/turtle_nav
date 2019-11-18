@@ -57,7 +57,7 @@ Below is a gif (sped up 4x) of the map being executed with the replan case.
 ![remap](media/remap.gif)
 
 ### automap.launch
-This launcfhile is nearly identical to `house_turtle.launch`, except that the `move_base.launch` file is included to allow the turtlebot3 to move to 2D Nav Goals. Additionally, a custom node `mapper` is loaded. This node uses the move_base action server to send 2D Nav Goals to the turtlebot3 simulated in Gazebo, in order to map the world: turtlebot3_house. The strategy is as follows:
+This launcfhile is nearly identical to `house_turtle.launch`, except that it uses its own RViz config file, and the `move_base.launch` file is included to allow the turtlebot3 to move to 2D Nav Goals. Additionally, a custom node `mapper` is loaded. This node uses the move_base action server to send 2D Nav Goals to the turtlebot3 simulated in Gazebo, in order to map the world: turtlebot3_house. The strategy is as follows:
 
  * First, the map data is collected from the `/map` topic using the `callback_map` subscriber callback function. A random coordinate on the map is then chosen, satisfying three criteria: the coordinate must be un-obstructed, it must have at least one neighbouring cell (including diagonals) that is unmapped (cell value of -1), and can have no more than one neighbour cell be an obstacle.
 
