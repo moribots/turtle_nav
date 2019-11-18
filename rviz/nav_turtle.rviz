@@ -8,6 +8,7 @@ Panels:
         - /Global Map1
         - /Global Cost Map1
         - /Local Cost Map1
+        - /Global Path1
       Splitter Ratio: 0.594406008720398
     Tree Height: 713
   - Class: rviz/Selection
@@ -192,6 +193,29 @@ Visualization Manager:
     - Alpha: 1
       Buffer Length: 1
       Class: rviz/Path
+      Color: 144; 0; 144
+      Enabled: true
+      Head Diameter: 0.30000001192092896
+      Head Length: 0.20000000298023224
+      Length: 0.30000001192092896
+      Line Style: Lines
+      Line Width: 0.029999999329447746
+      Name: Local Path
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Pose Color: 255; 85; 255
+      Pose Style: None
+      Radius: 0.029999999329447746
+      Shaft Diameter: 0.10000000149011612
+      Shaft Length: 0.10000000149011612
+      Topic: /move_base/DWAPlannerROS/local_plan
+      Unreliable: false
+      Value: true
+    - Alpha: 1
+      Buffer Length: 1
+      Class: rviz/Path
       Color: 25; 255; 0
       Enabled: true
       Head Diameter: 0.30000001192092896
@@ -215,14 +239,14 @@ Visualization Manager:
     - Alpha: 1
       Buffer Length: 1
       Class: rviz/Path
-      Color: 144; 0; 144
+      Color: 204; 0; 0
       Enabled: true
       Head Diameter: 0.30000001192092896
       Head Length: 0.20000000298023224
       Length: 0.30000001192092896
       Line Style: Lines
       Line Width: 0.029999999329447746
-      Name: Local Path
+      Name: Nav Path
       Offset:
         X: 0
         Y: 0
@@ -232,7 +256,7 @@ Visualization Manager:
       Radius: 0.029999999329447746
       Shaft Diameter: 0.10000000149011612
       Shaft Length: 0.10000000149011612
-      Topic: /move_base/DWAPlannerROS/local_plan
+      Topic: /move_base/NavfnROS/plan
       Unreliable: false
       Value: true
   Enabled: true
@@ -262,7 +286,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: -1.545796513557434
+      Angle: -1.580796480178833
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
@@ -272,11 +296,11 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Scale: 140.6278533935547
+      Scale: 56.64357376098633
       Target Frame: map
       Value: TopDownOrtho (rviz)
-      X: -1.252098560333252
-      Y: 1.9613372087478638
+      X: -2.876223564147949
+      Y: 1.93838632106781
     Saved: ~
 Window Geometry:
   Displays:
