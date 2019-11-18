@@ -13,6 +13,10 @@ Although the frame rate is low (approximately 0.1Hz), it is noted in the `darkne
 
 ## Navigation
 
+After running `source devel/setup.bash` and `catkin_make` in your catkin workspace, run `export TURTLEBOT3_MODEL=burger` to set the turtlebot3 model environment variable to burger. 
+
+To run any of the launchfiles described below, use `roslaunch turtle_nav <launchfile_name.launch>`
+
 ### house_turtle.launch
 
 This launchfile starts by defining some arguments for reusability, including `rviz_arg` (loads an RViz config file), `house` (determines whether to use the `turtlebot3_house.launch` file), and `gmap` (determines whether to use the `turtlebot3_slam.launch` file).
