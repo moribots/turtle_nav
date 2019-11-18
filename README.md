@@ -35,7 +35,7 @@ The `turtlebot3_remote.launch` file is also included to publish tf data `map -> 
 
 ![locpic](media/mapping.png)
 
-Below is a gif (sped up 8x) of the map being executed.
+Below is a gif (sped up 4x) of the map being executed with a failure condition near the end (rotate recovery movements).
 
 ![locgif](media/mapping.gif)
 
@@ -48,7 +48,7 @@ Below is a screenshot of a plan being executed along with a re-plan case once a 
 
 ![remap1](media/remap1.png) ![remap2](media/remap2.png)
 
-Below is a gif (sped up 8x) of the map being executed with the replan case.
+Below is a gif (sped up 4x) of the map being executed with the replan case.
 
 ![remap](media/remap.gif)
 
@@ -65,4 +65,4 @@ This launcfhile is nearly identical to `house_turtle.launch`, except that the `m
 
  Below is the map generated after executing for 7 minutes:
 
- ![savedmap](maps/automap.pgm)
+ ![savedmap](media/automap.png)
