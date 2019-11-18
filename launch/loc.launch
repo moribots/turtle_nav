@@ -10,8 +10,6 @@
   	  <!-- Run the map server -->
 	  <arg name="map_file" default="$(find turtle_nav)/maps/map.yaml"/>
 	  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)">
-	  	<!-- remap pub topic to avoid overwriting the map I made -->
-	  	<remap from="map" to="map"/>
 	  </node>
 
 	  <!-- include house_turtle and pass house arg -->
