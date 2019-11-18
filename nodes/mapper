@@ -1,11 +1,33 @@
 #!/usr/bin/env python
 """
-DESCRIPTION:
+DESCRIPTION: This node uses the move_base action server to send 2D Nav Goals
+             to the turtlebot3 simulated in Gazebo, in order to map
+             the world: turtlebot3_house. The strategy is as follows:
+
+             First, the map data is collected from the /map topic using the
+             callback_map function. A random coordinate on the map is then
+             chosen, satisfying three criteria: the coordinate must be
+             un-obstructed, it must have at least one neighbouring cell
+             (including diagonals) that is unmapped (cell value of -1),
+             and can have no more than one neighbour cell be an obstacle.
+
+             Upon finding a map coordinate which satisfies these criteria,
+             a 2D Nav Goal is sent to the move_base action server to command
+             the turtlebot3 to move to that point. The gmapping node will
+             cause the turtlebot3 to map the environment as it moves. The
+             next 2D Nav Goal is given when a terminal status is returned from
+             the move_base action server (goal reached, goal aborted, etc).
 
 
-SUBSCRIBERS:
+SUBSCRIBERS: This node subscribed to the /map topic to read the map data of
+             OccupancyGrid message type, which is row-major ordered and
+             originated at (-10,-10) in world coordinates.
 
-SERVICES:
+ACTION LIBS: The actionlib is used to create a SimpleActionClient 'move_base'
+             with a message type MoveBaseAction. The .send_goal method
+             is called to send a PoseStamped message through a MoveBaseGoal
+             message. The client's status type upon termination is also used
+             to determine when to send new goals.
 
 REFERENCE: https://hotblackrobotics.github.io/en/blog/2018/01/29/seq-goals-py/
 """
@@ -34,6 +56,7 @@ class AutoMapLib():
         self.y = 0
         # Create action client
         self.client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
+        # Wait for action server
         rospy.loginfo("Waiting for move_base action server...")
         wait = self.client.wait_for_server(rospy.Duration(5.0))
         if not wait:
@@ -45,18 +68,28 @@ class AutoMapLib():
         self.sub = rospy.Subscriber('/map', OccupancyGrid, self.callback_map)
 
     def callback_map(self, map_data):
-        """ DESCRIPTION
+        """ Read the map data from the gmapping node, which
+            publishes this data to the /map topic
 
-            Args:
+            Args: map_data
         """
         try:
             self.automap(map_data)
             # log input data as debug-level message
-            # rospy.logdebug(map)
+            rospy.logdebug(map)
         except rospy.ROSInterruptException:
             pass
 
     def check_neighbours(self, map_data, index):
+        """ Checks neighbours of randomly selected
+            map index to see if they satisfy the criteria:
+            At least one neighbour must be unknown (val=-1)
+            No more than one neighbour may be an obstacle
+
+            Args: map_data, index
+
+            Returns: Boolean (T,F)
+        """
         # Check neighbours ins 3x3 box around index
         # make sure there is at least one -1 cell and
         # less than two cells above 0.65
@@ -70,7 +103,6 @@ class AutoMapLib():
         for x in range(-3, 4):
                 for y in range(-3, 4):
                     row_incr = x * numcols + y
-                    # Pass if index out of range of 384x384
                     try:
                         # Check for unknown cell (indicated edge of known map)
                         if map_data.data[index + row_incr] == -1:
@@ -78,6 +110,7 @@ class AutoMapLib():
                         # Check for obstacle cell
                         elif map_data.data[index + row_incr] > 0.65:
                             obstacles += 1
+                    # Pass if index out of range of 384x384
                     except IndexError:
                         pass
         if unknowns > 0 and obstacles < 2:
@@ -86,9 +119,17 @@ class AutoMapLib():
             return False
 
     def automap(self, map_data):
-        """ DESCRIPTION
+        """ Selects a random map_data index and checks
+            whether it is a free cell. If that is true,
+            and its 3x3 proximity neihbours satisfy the
+            condition: at least one unknown cell, and at
+            most one obstacle cell, the corresponding
+            world coordinate for this index is stored
+            and the move_base_client method is called.
 
-            Args:
+            Args: map_data
+
+            Returns: x,y coordinate for 2D Nav Goal
         """
         valid = False
 
@@ -127,51 +168,15 @@ class AutoMapLib():
             self.completion += 1
             self.movebase_client()
 
-    def goal_status(self, status, result):
-        """DESCRIPTION
-
-            Args:
-
-            Returns:
-        """
-        # Increment counter for any terminal status to avoid getting stuck
-        self.completion += 1
-        # Terminal status values: http://docs.ros.org/diamondback/api/actionlib_msgs/html/msg/GoalStatus.html
-
-        # Goal completed!
-        if status == 3:
-            rospy.loginfo("Goal pose reached!")
-
-        # Cancelled Goal post-exec
-        if status == 2:
-            rospy.loginfo(
-                "Goal cancelled via request post execution, completed execution."
-            )
-
-        # Goal Aborted (incomplete information, e.g no orientation)
-        if status == 4:
-            rospy.loginfo("Goal aborted by Action Server.")
-            # rospy.signal_shutdown("Goal aborted, shutting down!")
-            return
-
-        # Goal rejected (intersects obstacle)
-        if status == 5:
-            rospy.loginfo("Goal rejected by Action Server.")
-            # rospy.signal_shutdown("Goal rejected, shutting down!")
-            return
-
-        # Cancelled Goal pre-exec
-        if status == 8:
-            rospy.loginfo(
-                "Goal cancelled via request prior to execution, succesfully cancelled."
-            )
-
     def movebase_client(self):
-        """DESCRIPTION
+        """ Calls the .send_goal method from
+            actionlib.SimpleActionClient to set a
+            2D Nav Goal as a MoveBaseGoal message
+            with a PoseStamped sub-message.
 
-            Args:
+            Args: self (x,y goal position)
 
-            Returns:
+            Returns: Terminal output
         """
         goal = MoveBaseGoal()
         goal.target_pose.header.frame_id = "map"
@@ -182,10 +187,39 @@ class AutoMapLib():
         rospy.loginfo("Sending goal pose [{}, {}]".format(self.x, self.y))
         self.client.send_goal(goal, self.goal_status)
 
+    def goal_status(self, status, result):
+        """ Reads the terminal status of the client
+            and prints a corresponding message to the terminal.
+            Additionally, increments completion counter to
+            signal new 2D Nav Goal generation.
+
+            Args: status, result (unused but required arg)
+
+            Returns: counter increment and terminal output
+        """
+        # Increment counter for any terminal status to avoid getting stuck
+        self.completion += 1
+        # Terminal status values: http://docs.ros.org/diamondback/api/actionlib_msgs/html/msg/GoalStatus.html
+
+        # Goal completed!
+        if status == 3:
+            rospy.loginfo("Goal pose reached!")
+
+        # Goal Aborted (incomplete information, e.g no orientation)
+        if status == 4:
+            rospy.loginfo("Goal aborted by Action Server.")
+            # rospy.signal_shutdown("Goal aborted, shutting down!")
+            # return
+
+        # Goal rejected (intersects obstacle)
+        if status == 5:
+            rospy.loginfo("Goal rejected by Action Server.")
+            # rospy.signal_shutdown("Goal rejected, shutting down!")
+            # return
+
 
 def main():
     """ The main() function. """
-    # Initialise node
     automap = AutoMapLib()
     rospy.spin()
 
