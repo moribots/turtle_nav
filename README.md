@@ -33,7 +33,7 @@ The `move_base.launch` file is also loaded with the argument `model:=burger` to 
 
 The `turtlebot3_remote.launch` file is also included to publish tf data `map -> odom -> base_footprint`, where the transform from `odom -> base_footprint` is subtracted from the robot pose estimate in the `map` frame, making the `map -> base_footprint` the map estimate, where the `map` frame is fixed to the `world` frame. Below is a screenshot of a plan being executed in RViz.
 
-![locpic](media/mapping.png)
+![locpic](media/mappingr.png)
 
 Below is a gif (sped up 4x) of the map being executed with a failure condition near the end (rotate recovery movements).
 
@@ -46,7 +46,7 @@ This launchfile loads the `loc.launch` file but passes the `house` argument as `
 
 Below is a screenshot of a plan being executed along with a re-plan case once a new obstacle becomes identified.
 
-![remap1](media/remap1.png) ![remap2](media/remap2.png)
+![remap1](media/remap1r.png) ![remap2](media/remap2r.png)
 
 Below is a gif (sped up 4x) of the map being executed with the replan case.
 
