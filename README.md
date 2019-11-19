@@ -54,7 +54,7 @@ Below is a screenshot of a plan being executed along with a re-plan case once a 
 
 Below is a gif (sped up 4x) of the map being executed with the replan case.
 
-![remap](media/remap.gif)
+![remap](media/remapr.gif)
 
 ### automap.launch
 This launcfhile is nearly identical to `house_turtle.launch`, except that it uses its own RViz config file, and the `move_base.launch` file is included to allow the turtlebot3 to move to 2D Nav Goals. Additionally, a custom node `mapper` is loaded. This node uses the move_base action server to send 2D Nav Goals to the turtlebot3 simulated in Gazebo, in order to map the world: turtlebot3_house. The strategy is as follows:
