@@ -1,8 +1,9 @@
 <launch>
   <!-- Arguments -->
   <arg name="rviz_arg" default="-d $(find turtle_nav)/rviz/house_turtle.rviz" />
-  <arg name="house"    default="true"/>
+  <arg name="house"    default="true" />
   <arg name="gmap"     default="true" />
+  <arg name="teleop"   default="true" />
 
   <!-- Optionally include turtlebot3 house -->
   <group if="$(arg house)">
@@ -13,7 +14,9 @@
   </group>
 
   <!-- include turtlebot3 teleop -->
-  <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch"/>
+  <group if="$(arg teleop)">
+    <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch"/>
+  </group>
 
   <!-- include turtlebot3 slam: gmapping -->
   <group if="$(arg gmap)">

@@ -54,7 +54,8 @@ class AutoMapLib():
         # Initialise goal pose variables
         self.x = 0
         self.y = 0
-        # Create action client
+        # Create an action client called move_base
+        # to work with the move_base node in .launch
         self.client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
         # Wait for action server
         rospy.loginfo("Waiting for move_base action server...")
@@ -196,10 +197,16 @@ class AutoMapLib():
             Args: status, result (unused but required arg)
 
             Returns: counter increment and terminal output
+
+            This fcn is called done_cb in the documentation;
+            SimpleDoneCallback:
+            https://docs.ros.org/diamondback/api/actionlib/html/classactionlib_1_1SimpleActionClient.html
+
+            Terminal Status values:
+            http://docs.ros.org/diamondback/api/actionlib_msgs/html/msg/GoalStatus.html
         """
         # Increment counter for any terminal status to avoid getting stuck
         self.completion += 1
-        # Terminal status values: http://docs.ros.org/diamondback/api/actionlib_msgs/html/msg/GoalStatus.html
 
         # Goal completed!
         if status == 3:

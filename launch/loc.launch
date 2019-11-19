@@ -1,6 +1,6 @@
   <launch>
   	<!-- Arguments -->
-  	<arg name="house" default="true"/>
+  	<arg name="house"    default="true"/>
 
   	  <!-- Include Turtlebot3 Remote launch to publish tf by loading robot state publisher -->
 	  <include file="$(find turtlebot3_bringup)/launch/turtlebot3_remote.launch">
@@ -12,11 +12,12 @@
 	  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)">
 	  </node>
 
-	  <!-- include house_turtle and pass house arg -->
+	  <!-- include house_turtle and pass house arg, disable gmapping and teleop -->
 	  <include file="$(find turtle_nav)/launch/house_turtle.launch">
 	  	<arg name="rviz_arg" value="-d $(find turtle_nav)/rviz/nav_turtle.rviz"/>
 	  	<arg name="house"    value="$(arg house)"/>
 	  	<arg name="gmap"     value="false"/>
+	  	<arg name="teleop"   value="false"/>
 	  </include>
 	 
 	  <!-- include amcl -->
